@@ -1,0 +1,10 @@
+{
+  "name": "Bubble Up Trading - Laundry Equipment Service \u0026 Job Card Management System",
+  "description": "Enterprise-grade Laundry Equipment Sales, Installation, Maintenance \u0026 Repair Service Management System for Bubble Up Trading featuring Job Cards, Fleet \u0026 Technician Duty Tracking, Parts Inventory, Invoicing, and Analytics.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

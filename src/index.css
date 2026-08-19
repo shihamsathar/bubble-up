@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+/* Print & PDF styling rules */
+@media print {
+  /* Hide standard web UI during print */
+  header, 
+  aside, 
+  nav, 
+  button, 
+  .print\\:hidden,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Force background colors and borders to appear when printing / PDF saving */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Isolate printable document container */
+  #printable-jobcard-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 15mm 15mm 15mm 15mm;
+  }
+}

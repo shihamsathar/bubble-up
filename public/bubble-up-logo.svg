@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 160" width="100%" height="100%">
+  <!-- Bubble Up Trading BU Monogram Logo -->
+  <g id="bu-logo-mark">
+    <!-- Letter B (Solid Black) -->
+    <path
+      d="M20 12 H68 C80 12 90 22 90 40 C90 56 80 68 68 68 C82 68 93 80 93 96 C93 114 82 124 68 124 H20 V12 Z M38 28 V52 H64 C70 52 74 47 74 40 C74 33 70 28 64 28 H38 Z M38 84 V108 H64 C71 108 75 103 75 96 C75 89 71 84 64 84 H38 Z"
+      fill="#111111"
+      fill-rule="evenodd"
+    />
+    <!-- Letter U (Golden Yellow Overlaid) -->
+    <path
+      d="M46 40 H63 V105 C63 116 72 125 83 125 C94 125 103 116 103 105 V40 H120 V105 C120 128.8 103.4 148 83 148 C62.6 148 46 128.8 46 105 Z"
+      fill="#F5A623"
+    />
+  </g>
+</svg>
