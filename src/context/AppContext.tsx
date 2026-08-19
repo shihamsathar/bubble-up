@@ -378,15 +378,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       });
       showNotification('Switched to Administrator Workspace');
     } else {
-      const firstTech = technicians[0] || INITIAL_TECHNICIANS[0];
+      const defaultTech = technicians[0] || INITIAL_TECHNICIANS[0] || {
+        id: 'tech-1',
+        fullName: 'Tariq Mansoor',
+        username: 'tariq.m',
+        email: 'tariq@bubbleup.qa',
+        phone: '+974 5551 2345',
+        specialization: 'Industrial Washers & Hydro Extractors',
+        status: 'AVAILABLE',
+        completedJobsCount: 0,
+        rating: 4.9
+      };
       setCurrentUser({
-        id: firstTech.id,
-        name: firstTech.fullName,
-        username: firstTech.username,
+        id: defaultTech.id,
+        name: defaultTech.fullName,
+        username: defaultTech.username,
         role: 'TECHNICIAN',
-        technicianId: firstTech.id
+        technicianId: defaultTech.id
       });
-      showNotification(`Switched to Field Technician Workspace (${firstTech.fullName})`);
+      showNotification(`Switched to Field Technician Workspace (${defaultTech.fullName})`);
     }
   };
 
@@ -402,15 +412,34 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       });
       showNotification('Successfully authenticated as Administrator');
     } else {
-      const tech = technicians.find(t => t.id === technicianId || t.username === username) || technicians[0];
+      const cleanUser = (username || '').trim().toLowerCase();
+      const defaultTech = INITIAL_TECHNICIANS[0] || {
+        id: 'tech-1',
+        fullName: 'Tariq Mansoor',
+        username: 'tariq.m',
+        email: 'tariq@bubbleup.qa',
+        phone: '+974 5551 2345',
+        specialization: 'Industrial Washers & Hydro Extractors',
+        status: 'AVAILABLE',
+        completedJobsCount: 0,
+        rating: 4.9
+      };
+
+      const matchedTech = technicians.find(t => 
+        (technicianId && t.id === technicianId) ||
+        (cleanUser && t.username.toLowerCase() === cleanUser) ||
+        (cleanUser && t.id.toLowerCase() === cleanUser) ||
+        (cleanUser && t.employeeId?.toLowerCase() === cleanUser)
+      ) || technicians[0] || defaultTech;
+
       setCurrentUser({
-        id: tech.id,
-        name: tech.fullName,
-        username: tech.username,
+        id: matchedTech.id,
+        name: matchedTech.fullName,
+        username: matchedTech.username,
         role: 'TECHNICIAN',
-        technicianId: tech.id
+        technicianId: matchedTech.id
       });
-      showNotification(`Successfully authenticated as Technician (${tech.fullName})`);
+      showNotification(`Successfully authenticated as Technician (${matchedTech.fullName})`);
     }
   };
 
