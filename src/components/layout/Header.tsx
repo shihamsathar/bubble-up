@@ -75,8 +75,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDeliverables, onOpenLogin 
             {/* Quick Role Switcher Pill */}
             <div className="bg-slate-800 p-1 rounded-xl border border-slate-700 flex items-center gap-1 text-xs">
               <button
+                type="button"
                 onClick={() => setCurrentRole('ADMIN')}
-                className={`px-3 py-1 rounded-lg font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  setCurrentRole('ADMIN');
+                }}
+                className={`px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 transition-all cursor-pointer touch-manipulation min-h-[36px] ${
                   currentRole === 'ADMIN' 
                     ? 'bg-sky-600 text-white shadow-xs' 
                     : 'text-slate-400 hover:text-white'
@@ -88,8 +93,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDeliverables, onOpenLogin 
               </button>
 
               <button
+                type="button"
                 onClick={() => setCurrentRole('TECHNICIAN')}
-                className={`px-3 py-1 rounded-lg font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  setCurrentRole('TECHNICIAN');
+                }}
+                className={`px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 transition-all cursor-pointer touch-manipulation min-h-[36px] ${
                   currentRole === 'TECHNICIAN' 
                     ? 'bg-emerald-600 text-white shadow-xs' 
                     : 'text-slate-400 hover:text-white'

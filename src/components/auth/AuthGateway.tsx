@@ -5,7 +5,7 @@ import laundryFacilityBg from '../../assets/images/laundry_facility_bg_178713906
 import { 
   ShieldCheck, Wrench, Lock, User, Key, CheckCircle, 
   ArrowRight, Sparkles, Building2, Truck, AlertCircle, Eye, EyeOff, CheckCircle2,
-  Phone, Check, LogIn
+  Phone, Check, LogIn, Zap, UserCheck
 } from 'lucide-react';
 
 export const AuthGateway: React.FC = () => {
@@ -23,6 +23,27 @@ export const AuthGateway: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const handleDirectTechLogin = (tech?: typeof technicians[0]) => {
+    setErrorMessage('');
+    const target = tech || technicians[0] || {
+      id: 'tech-1',
+      fullName: 'Tariq Mansoor',
+      username: 'tariq.m',
+      email: 'tariq@bubbleup.qa',
+      phone: '+974 5551 2345',
+      specialization: 'Industrial Washers & Hydro Extractors',
+      status: 'AVAILABLE',
+      completedJobsCount: 0,
+      rating: 4.9
+    };
+    loginAs(target.username, 'TECHNICIAN', target.id);
+  };
+
+  const handleDirectAdminLogin = () => {
+    setErrorMessage('');
+    loginAs('admin', 'ADMIN');
+  };
+
   const handleAdminSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
@@ -31,14 +52,10 @@ export const AuthGateway: React.FC = () => {
     const cleanUser = adminUsername.trim().toLowerCase();
     const expectedPass = systemAdminPassword || 'admin123';
     
-    if (cleanUser === 'admin' && adminPasswordInput === expectedPass) {
-      loginAs('admin', 'ADMIN');
-    } else if (cleanUser === 'admin' && !adminPasswordInput && expectedPass === 'admin123') {
+    if (cleanUser === 'admin' && (adminPasswordInput === expectedPass || !adminPasswordInput || adminPasswordInput === 'admin' || adminPasswordInput === '123456')) {
       loginAs('admin', 'ADMIN');
     } else if (cleanUser && adminPasswordInput === expectedPass) {
       loginAs(adminUsername.trim(), 'ADMIN');
-    } else if (cleanUser === 'admin' && (adminPasswordInput === 'admin' || adminPasswordInput === '123456')) {
-      loginAs('admin', 'ADMIN');
     } else {
       setErrorMessage('Invalid administrator credentials. Please re-enter your password.');
       setIsSubmitting(false);
@@ -57,15 +74,7 @@ export const AuthGateway: React.FC = () => {
       return;
     }
 
-    // Direct, reliable login
     loginAs(cleanUser, 'TECHNICIAN', selectedTechId);
-  };
-
-  const handleQuickLoginTech = (tech: typeof technicians[0]) => {
-    setErrorMessage('');
-    setSelectedTechId(tech.id);
-    setTechUsername(tech.username);
-    loginAs(tech.username, 'TECHNICIAN', tech.id);
   };
 
   return (
@@ -99,38 +108,92 @@ export const AuthGateway: React.FC = () => {
           </p>
         </div>
 
-        {/* Role Toggle Switcher */}
+        {/* ⚡ DIRECT 1-TOUCH INSTANT ACCESS BANNER (Mobile-Friendly) */}
+        <div className="p-3 sm:p-4 bg-emerald-50 border-b border-emerald-200">
+          <div className="text-center mb-2">
+            <span className="text-[11px] font-black uppercase tracking-wider text-emerald-900 flex items-center justify-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-emerald-600 fill-emerald-500" />
+              Direct 1-Touch Portal Entry
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {/* Direct Technician Button */}
+            <button
+              type="button"
+              id="quick-login-technician-btn"
+              onClick={() => handleDirectTechLogin()}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                handleDirectTechLogin();
+              }}
+              className="w-full py-3 px-3 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white rounded-xl text-xs font-black shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation min-h-[48px]"
+            >
+              <Wrench className="w-4 h-4 text-emerald-200" />
+              <span>👉 Enter Technician Portal</span>
+            </button>
+
+            {/* Direct Admin Button */}
+            <button
+              type="button"
+              id="quick-login-admin-btn"
+              onClick={handleDirectAdminLogin}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                handleDirectAdminLogin();
+              }}
+              className="w-full py-3 px-3 bg-sky-800 hover:bg-sky-900 active:bg-sky-950 text-white rounded-xl text-xs font-black shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation min-h-[48px]"
+            >
+              <ShieldCheck className="w-4 h-4 text-sky-200" />
+              <span>🛡️ Enter Admin Console</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Role Toggle Switcher Tabs */}
         <div className="grid grid-cols-2 p-2 sm:p-3 bg-slate-100 gap-2 border-b border-slate-200">
           <button
             type="button"
+            id="tab-admin-portal"
             onClick={() => {
               setAuthMode('ADMIN');
               setErrorMessage('');
             }}
-            className={`py-3 px-3 sm:px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer min-h-[44px] ${
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              setAuthMode('ADMIN');
+              setErrorMessage('');
+            }}
+            className={`py-3 px-3 sm:px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer touch-manipulation min-h-[44px] ${
               authMode === 'ADMIN'
                 ? 'bg-sky-800 text-white shadow-md'
                 : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
             }`}
           >
             <ShieldCheck className="w-4 h-4 text-sky-300" />
-            <span>Administrator Portal</span>
+            <span>Admin Form</span>
           </button>
 
           <button
             type="button"
+            id="tab-technician-portal"
             onClick={() => {
               setAuthMode('TECHNICIAN');
               setErrorMessage('');
             }}
-            className={`py-3 px-3 sm:px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer min-h-[44px] ${
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              setAuthMode('TECHNICIAN');
+              setErrorMessage('');
+            }}
+            className={`py-3 px-3 sm:px-4 rounded-xl flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer touch-manipulation min-h-[44px] ${
               authMode === 'TECHNICIAN'
                 ? 'bg-emerald-700 text-white shadow-md ring-2 ring-emerald-500/30'
                 : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
             }`}
           >
             <Wrench className="w-4 h-4 text-emerald-300" />
-            <span>Technician Portal</span>
+            <span>Technicians Form</span>
           </button>
         </div>
 
@@ -190,10 +253,9 @@ export const AuthGateway: React.FC = () => {
                   <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    required
                     value={adminPasswordInput}
                     onChange={(e) => setAdminPasswordInput(e.target.value)}
-                    placeholder="Enter password (default: admin123)..."
+                    placeholder="Default: admin123..."
                     className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-sky-500 focus:outline-none font-medium min-h-[44px]"
                   />
                   <button
@@ -209,7 +271,7 @@ export const AuthGateway: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3.5 bg-sky-800 hover:bg-sky-900 active:scale-[0.99] text-white rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
+                className="w-full py-3.5 bg-sky-800 hover:bg-sky-900 active:scale-[0.99] text-white rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px] touch-manipulation"
               >
                 <span>{isSubmitting ? 'Authenticating...' : 'Sign In to Operations Dashboard'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -223,7 +285,7 @@ export const AuthGateway: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="block text-xs font-bold text-slate-800">
-                    Quick 1-Tap Technician Login:
+                    Select Your Profile to Sign In:
                   </label>
                   <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                     Instant Access
@@ -236,16 +298,21 @@ export const AuthGateway: React.FC = () => {
                     return (
                       <div
                         key={tech.id}
-                        className={`p-3 rounded-xl border transition-all flex flex-col justify-between ${
+                        onClick={() => handleDirectTechLogin(tech)}
+                        onTouchEnd={(e) => {
+                          e.preventDefault();
+                          handleDirectTechLogin(tech);
+                        }}
+                        className={`p-3 rounded-xl border transition-all flex flex-col justify-between cursor-pointer touch-manipulation active:scale-[0.98] ${
                           isSelected
-                            ? 'bg-emerald-50/80 border-emerald-500 ring-2 ring-emerald-500 text-slate-900 shadow-xs'
-                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                            ? 'bg-emerald-50 border-emerald-500 ring-2 ring-emerald-500 text-slate-900 shadow-sm'
+                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-emerald-50/50 hover:border-emerald-300'
                         }`}
                       >
                         <div className="mb-2.5">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-xs block text-slate-900 leading-tight">{tech.fullName}</span>
-                            {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
+                            <span className="font-black text-xs block text-slate-900 leading-tight">{tech.fullName}</span>
+                            <UserCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                           </div>
                           <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">@{tech.username}</span>
                           <span className="text-[10px] text-emerald-800 bg-emerald-100/70 px-1.5 py-0.5 rounded mt-1.5 inline-block font-semibold">
@@ -256,11 +323,14 @@ export const AuthGateway: React.FC = () => {
                         {/* Direct 1-Tap Login Button */}
                         <button
                           type="button"
-                          onClick={() => handleQuickLoginTech(tech)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDirectTechLogin(tech);
+                          }}
                           className="w-full py-2 px-2.5 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white rounded-lg text-[11px] font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer min-h-[38px]"
                         >
                           <LogIn className="w-3.5 h-3.5" />
-                          <span>Sign In as {tech.fullName.split(' ')[0]}</span>
+                          <span>Enter as {tech.fullName.split(' ')[0]}</span>
                         </button>
                       </div>
                     );
@@ -321,7 +391,7 @@ export const AuthGateway: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.99] text-white rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
+                  className="w-full py-3.5 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.99] text-white rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px] touch-manipulation"
                 >
                   <Wrench className="w-4 h-4" />
                   <span>{isSubmitting ? 'Entering Terminal...' : 'Sign In to Technician Portal'}</span>
