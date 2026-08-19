@@ -51,47 +51,35 @@ export const LoginModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         {/* Quick Demo Accounts Selection */}
         <div className="bg-slate-50 p-4 border-b border-slate-200 space-y-2">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
-            1-Tap Instant Switch or Select Account:
+            Click to Auto-fill Demo Account:
           </span>
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
-              onClick={() => {
-                loginAs('admin', 'ADMIN');
-                onClose();
-              }}
-              onTouchEnd={(e) => {
-                e.preventDefault();
-                loginAs('admin', 'ADMIN');
-                onClose();
-              }}
-              className="p-2.5 rounded-lg border border-sky-600 bg-sky-50 text-left text-xs transition-all cursor-pointer touch-manipulation hover:bg-sky-100 min-h-[44px]"
+              onClick={() => selectQuickAccount('admin', 'admin123', 'ADMIN')}
+              className={`p-2 rounded-lg border text-left text-xs transition-all cursor-pointer ${
+                role === 'ADMIN' ? 'border-sky-600 bg-sky-50 font-bold text-sky-900' : 'border-slate-200 bg-white hover:bg-slate-100 text-slate-700'
+              }`}
             >
-              <div className="flex items-center gap-1.5 font-bold text-sky-950">
+              <div className="flex items-center gap-1.5 font-bold">
                 <Shield className="w-3.5 h-3.5 text-sky-600" />
                 Administrator
               </div>
-              <span className="text-[10px] text-sky-700 font-medium block">Switch to Admin</span>
+              <span className="text-[10px] text-slate-500 font-normal">Full Control Access</span>
             </button>
 
             <button
               type="button"
-              onClick={() => {
-                loginAs('tariq.m', 'TECHNICIAN', 'tech-1');
-                onClose();
-              }}
-              onTouchEnd={(e) => {
-                e.preventDefault();
-                loginAs('tariq.m', 'TECHNICIAN', 'tech-1');
-                onClose();
-              }}
-              className="p-2.5 rounded-lg border border-emerald-600 bg-emerald-50 text-left text-xs transition-all cursor-pointer touch-manipulation hover:bg-emerald-100 min-h-[44px]"
+              onClick={() => selectQuickAccount('tariq.m', 'tech123', 'TECHNICIAN')}
+              className={`p-2 rounded-lg border text-left text-xs transition-all cursor-pointer ${
+                role === 'TECHNICIAN' ? 'border-emerald-600 bg-emerald-50 font-bold text-emerald-900' : 'border-slate-200 bg-white hover:bg-slate-100 text-slate-700'
+              }`}
             >
-              <div className="flex items-center gap-1.5 font-bold text-emerald-950">
+              <div className="flex items-center gap-1.5 font-bold">
                 <Truck className="w-3.5 h-3.5 text-emerald-600" />
                 Technician (Tariq)
               </div>
-              <span className="text-[10px] text-emerald-700 font-medium block">Switch to Tech</span>
+              <span className="text-[10px] text-slate-500 font-normal">Van & Job Dispatch</span>
             </button>
           </div>
         </div>

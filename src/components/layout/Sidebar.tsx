@@ -209,13 +209,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, onOpen
               </span>
 
               <button
-                type="button"
                 onClick={() => onTabChange('TECH_VEHICLE_DUTY')}
-                onTouchEnd={(e) => {
-                  e.preventDefault();
-                  onTabChange('TECH_VEHICLE_DUTY');
-                }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors cursor-pointer touch-manipulation min-h-[44px] ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors cursor-pointer ${
                   activeTab === 'TECH_VEHICLE_DUTY' ? 'bg-emerald-700 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'
                 }`}
               >
@@ -226,13 +221,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, onOpen
               </button>
 
               <button
-                type="button"
                 onClick={() => onTabChange('TECH_JOBS')}
-                onTouchEnd={(e) => {
-                  e.preventDefault();
-                  onTabChange('TECH_JOBS');
-                }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors cursor-pointer touch-manipulation min-h-[44px] ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors cursor-pointer ${
                   activeTab === 'TECH_JOBS' ? 'bg-emerald-700 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'
                 }`}
               >
@@ -243,13 +233,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, onOpen
               </button>
 
               <button
-                type="button"
                 onClick={() => onTabChange('INVENTORY')}
-                onTouchEnd={(e) => {
-                  e.preventDefault();
-                  onTabChange('INVENTORY');
-                }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors cursor-pointer touch-manipulation min-h-[44px] ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors cursor-pointer ${
                   activeTab === 'INVENTORY' ? 'bg-emerald-700 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'
                 }`}
               >
@@ -260,13 +245,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, onOpen
               </button>
 
               <button
-                type="button"
                 onClick={() => onTabChange('EQUIPMENT')}
-                onTouchEnd={(e) => {
-                  e.preventDefault();
-                  onTabChange('EQUIPMENT');
-                }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors cursor-pointer touch-manipulation min-h-[44px] ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors cursor-pointer ${
                   activeTab === 'EQUIPMENT' ? 'bg-emerald-700 text-white font-bold' : 'hover:bg-slate-800 hover:text-white'
                 }`}
               >

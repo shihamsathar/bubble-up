@@ -26,16 +26,8 @@ const MainContent: React.FC = () => {
 
   // Sync tab when switching roles
   React.useEffect(() => {
-    if (currentRole === 'TECHNICIAN') {
-      const techAllowedTabs: NavTab[] = ['TECH_JOBS', 'TECH_VEHICLE_DUTY', 'INVENTORY', 'EQUIPMENT'];
-      if (!techAllowedTabs.includes(activeTab)) {
-        setActiveTab('TECH_JOBS');
-      }
-    } else {
-      const adminAllowedTabs: NavTab[] = ['DASHBOARD', 'JOBCARDS', 'CUSTOMERS', 'EQUIPMENT', 'FLEET', 'TECHNICIANS', 'INVENTORY', 'FINANCE', 'REPORTS'];
-      if (!adminAllowedTabs.includes(activeTab)) {
-        setActiveTab('DASHBOARD');
-      }
+    if (currentRole === 'TECHNICIAN' && (activeTab === 'DASHBOARD' || activeTab === 'FINANCE' || activeTab === 'REPORTS' || activeTab === 'TECHNICIANS')) {
+      setActiveTab('TECH_VEHICLE_DUTY');
     }
   }, [currentRole]);
 
