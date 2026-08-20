@@ -3,9 +3,8 @@ import { useApp } from '../../context/AppContext';
 import { CompanyLogo } from '../common/CompanyLogo';
 import laundryFacilityBg from '../../assets/images/laundry_facility_bg_1787139064485.jpg';
 import { 
-  ShieldCheck, Wrench, Lock, User, Key, CheckCircle, 
-  ArrowRight, Sparkles, Building2, Truck, AlertCircle, Eye, EyeOff, CheckCircle2,
-  Phone, Check, LogIn
+  ShieldCheck, Wrench, Lock, User, Key, 
+  ArrowRight, Building2, Truck, AlertCircle, Eye, EyeOff
 } from 'lucide-react';
 
 export const AuthGateway: React.FC = () => {
@@ -16,9 +15,8 @@ export const AuthGateway: React.FC = () => {
   const [adminPasswordInput, setAdminPasswordInput] = useState('');
   
   // Technician Login Form States
-  const [techUsername, setTechUsername] = useState('tariq.m');
-  const [techPassword, setTechPassword] = useState('tech123');
-  const [selectedTechId, setSelectedTechId] = useState(technicians[0]?.id || 'tech-1');
+  const [techUsername, setTechUsername] = useState('');
+  const [techPassword, setTechPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,43 +50,41 @@ export const AuthGateway: React.FC = () => {
 
     const cleanUser = techUsername.trim().toLowerCase();
     if (!cleanUser) {
-      setErrorMessage('Please select or enter your Technician Username / ID.');
+      setErrorMessage('Please enter your technician username or employee ID.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    const cleanPass = techPassword.trim();
+    if (!cleanPass) {
+      setErrorMessage('Please enter your technician password.');
       setIsSubmitting(false);
       return;
     }
 
     const matched = technicians.find(t => 
       t.username.toLowerCase() === cleanUser || 
-      t.id.toLowerCase() === cleanUser || 
       t.employeeId?.toLowerCase() === cleanUser ||
-      t.fullName.toLowerCase().includes(cleanUser)
-    ) || (selectedTechId ? technicians.find(t => t.id === selectedTechId) : undefined);
+      t.id.toLowerCase() === cleanUser
+    );
 
     if (!matched) {
-      setErrorMessage(`Technician account "${techUsername}" was not found. Please pick from the list above.`);
+      setErrorMessage(`Technician account "${techUsername}" not found. Accounts are created and assigned by the Administrator.`);
       setIsSubmitting(false);
       return;
     }
 
-    // Check technician specific password
-    const enteredPass = techPassword.trim();
-    const expectedPass = matched.password || 'password123';
+    // Check technician specific password set by admin
+    const expectedPass = matched.password || 'tech123';
     
-    if (enteredPass && enteredPass !== expectedPass && enteredPass !== 'tech123' && enteredPass !== 'password123') {
-      setErrorMessage(`Incorrect password for ${matched.fullName}. Please check your password.`);
+    if (cleanPass !== expectedPass) {
+      setErrorMessage(`Incorrect password for ${matched.fullName}. Please enter the password provided by your administrator.`);
       setIsSubmitting(false);
       return;
     }
 
-    // Direct, reliable login
+    // Login with verified credentials
     loginAs(matched.username, 'TECHNICIAN', matched.id);
-  };
-
-  const handleQuickLoginTech = (tech: typeof technicians[0]) => {
-    setErrorMessage('');
-    setSelectedTechId(tech.id);
-    setTechUsername(tech.username);
-    loginAs(tech.username, 'TECHNICIAN', tech.id);
   };
 
   return (
@@ -239,122 +235,69 @@ export const AuthGateway: React.FC = () => {
               </button>
             </form>
           ) : (
-            /* Technician Form */
-            <div className="space-y-4">
-              
-              {/* 1-Tap Quick Sign-in Cards for Mobile */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-bold text-slate-800">
-                    Quick 1-Tap Technician Login:
-                  </label>
-                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    Instant Access
-                  </span>
-                </div>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  {technicians.map((tech) => {
-                    const isSelected = selectedTechId === tech.id;
-                    return (
-                      <div
-                        key={tech.id}
-                        className={`p-3 rounded-xl border transition-all flex flex-col justify-between ${
-                          isSelected
-                            ? 'bg-emerald-50/80 border-emerald-500 ring-2 ring-emerald-500 text-slate-900 shadow-xs'
-                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
-                        }`}
-                      >
-                        <div className="mb-2.5">
-                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-xs block text-slate-900 leading-tight">{tech.fullName}</span>
-                            {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
-                          </div>
-                          <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">@{tech.username}</span>
-                          <span className="text-[10px] text-emerald-800 bg-emerald-100/70 px-1.5 py-0.5 rounded mt-1.5 inline-block font-semibold truncate max-w-full">
-                            {Array.isArray(tech.specialization) 
-                              ? tech.specialization[0] 
-                              : (typeof tech.specialization === 'string' ? tech.specialization.split(',')[0] : 'Laundry Specialist')}
-                          </span>
-                        </div>
-
-                        {/* Direct 1-Tap Login Button */}
-                        <button
-                          type="button"
-                          onClick={() => handleQuickLoginTech(tech)}
-                          className="w-full py-2 px-2.5 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white rounded-lg text-[11px] font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer min-h-[38px]"
-                        >
-                          <LogIn className="w-3.5 h-3.5" />
-                          <span>Sign In as {tech.fullName.split(' ')[0]}</span>
-                        </button>
-                      </div>
-                    );
-                  })}
+            /* Technician Form - Username & Password Only */
+            <form onSubmit={handleTechnicianSubmit} className="space-y-4">
+              <div className="p-3 bg-emerald-50 border border-emerald-200/80 rounded-xl text-xs text-emerald-950 flex items-start gap-2.5">
+                <Lock className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                <div className="space-y-0.5">
+                  <span className="font-bold text-emerald-900 block">Assigned Technician Authentication</span>
+                  <p className="text-[11px] text-emerald-800 leading-snug">
+                    Technician accounts and passwords are created and managed by the Administrator. Sign in with the credentials provided to you.
+                  </p>
                 </div>
               </div>
 
-              {/* Manual Login / PIN Form */}
-              <form onSubmit={handleTechnicianSubmit} className="pt-3 border-t border-slate-200 space-y-3">
-                <span className="text-[11px] font-bold text-slate-700 block">
-                  Or Sign In with Username / PIN:
-                </span>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                    Technician Username / ID
-                  </label>
-                  <div className="relative">
-                    <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="text"
-                      required
-                      value={techUsername}
-                      onChange={(e) => {
-                        setTechUsername(e.target.value);
-                        const matched = technicians.find(t => t.username.toLowerCase() === e.target.value.toLowerCase());
-                        if (matched) setSelectedTechId(matched.id);
-                      }}
-                      placeholder="e.g. tariq.m or employee ID..."
-                      className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium min-h-[44px]"
-                    />
-                  </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Technician Username or Employee ID *
+                </label>
+                <div className="relative">
+                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    required
+                    value={techUsername}
+                    onChange={(e) => setTechUsername(e.target.value)}
+                    placeholder="e.g. tariq.m or TECH-001..."
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium min-h-[44px]"
+                  />
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                    Technician PIN / Password
-                  </label>
-                  <div className="relative">
-                    <Key className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      value={techPassword}
-                      onChange={(e) => setTechPassword(e.target.value)}
-                      placeholder="Default: tech123..."
-                      className="w-full pl-10 pr-10 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium min-h-[44px]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-1"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Technician Password *
+                </label>
+                <div className="relative">
+                  <Key className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={techPassword}
+                    onChange={(e) => setTechPassword(e.target.value)}
+                    placeholder="Enter your assigned password..."
+                    className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium min-h-[44px]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-1"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
+              </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-3.5 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.99] text-white rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
-                >
-                  <Wrench className="w-4 h-4" />
-                  <span>{isSubmitting ? 'Entering Terminal...' : 'Sign In to Technician Portal'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </form>
-
-            </div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-3.5 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.99] text-white rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
+              >
+                <Wrench className="w-4 h-4" />
+                <span>{isSubmitting ? 'Verifying Credentials...' : 'Sign In to Technician Portal'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </form>
           )}
 
           {/* Feature Highlights */}
