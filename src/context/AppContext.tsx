@@ -61,6 +61,7 @@ interface AppContextType {
   // Technician Actions
   addTechnician: (tech: Omit<Technician, 'id' | 'completedJobsCount' | 'rating'>) => Technician;
   updateTechnician: (id: string, updates: Partial<Technician>) => void;
+  updateTechnicianPassword: (technicianId: string, newPassword: string) => { success: boolean; message: string };
   deleteTechnician: (id: string, reason?: string, details?: string) => void;
 
   // Vehicle Actions
@@ -547,6 +548,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const updateTechnician = (id: string, updates: Partial<Technician>) => {
     setTechnicians(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
     showNotification('Technician profile updated');
+  };
+
+  const updateTechnicianPassword = (technicianId: string, newPassword: string): { success: boolean; message: string } => {
+    if (!newPassword || newPassword.trim().length < 3) {
+      return { success: false, message: 'Password must be at least 3 characters long.' };
+    }
+    const cleanPass = newPassword.trim();
+    setTechnicians(prev => {
+      const updated = prev.map(t => t.id === technicianId ? { ...t, password: cleanPass } : t);
+      localStorage.setItem(STORAGE_KEYS.TECHNICIANS, JSON.stringify(updated));
+      return updated;
+    });
+    showNotification('Technician password updated successfully');
+    return { success: true, message: 'Technician password changed successfully.' };
   };
 
   const deleteTechnician = (id: string, reason?: string, details?: string) => {
@@ -1227,6 +1242,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         removeMachineWithReason,
         addTechnician,
         updateTechnician,
+        updateTechnicianPassword,
         deleteTechnician,
         addVehicle,
         updateVehicle,

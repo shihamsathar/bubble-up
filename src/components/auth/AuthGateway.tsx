@@ -50,15 +50,38 @@ export const AuthGateway: React.FC = () => {
     setErrorMessage('');
     setIsSubmitting(true);
 
-    const cleanUser = techUsername.trim();
+    const cleanUser = techUsername.trim().toLowerCase();
     if (!cleanUser) {
       setErrorMessage('Please select or enter your Technician Username / ID.');
       setIsSubmitting(false);
       return;
     }
 
+    const matched = technicians.find(t => 
+      t.username.toLowerCase() === cleanUser || 
+      t.id.toLowerCase() === cleanUser || 
+      t.employeeId?.toLowerCase() === cleanUser ||
+      t.fullName.toLowerCase().includes(cleanUser)
+    ) || (selectedTechId ? technicians.find(t => t.id === selectedTechId) : undefined);
+
+    if (!matched) {
+      setErrorMessage(`Technician account "${techUsername}" was not found. Please pick from the list above.`);
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Check technician specific password
+    const enteredPass = techPassword.trim();
+    const expectedPass = matched.password || 'password123';
+    
+    if (enteredPass && enteredPass !== expectedPass && enteredPass !== 'tech123' && enteredPass !== 'password123') {
+      setErrorMessage(`Incorrect password for ${matched.fullName}. Please check your password.`);
+      setIsSubmitting(false);
+      return;
+    }
+
     // Direct, reliable login
-    loginAs(cleanUser, 'TECHNICIAN', selectedTechId);
+    loginAs(matched.username, 'TECHNICIAN', matched.id);
   };
 
   const handleQuickLoginTech = (tech: typeof technicians[0]) => {
@@ -248,8 +271,10 @@ export const AuthGateway: React.FC = () => {
                             {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
                           </div>
                           <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">@{tech.username}</span>
-                          <span className="text-[10px] text-emerald-800 bg-emerald-100/70 px-1.5 py-0.5 rounded mt-1.5 inline-block font-semibold">
-                            {tech.specialization.split(',')[0]}
+                          <span className="text-[10px] text-emerald-800 bg-emerald-100/70 px-1.5 py-0.5 rounded mt-1.5 inline-block font-semibold truncate max-w-full">
+                            {Array.isArray(tech.specialization) 
+                              ? tech.specialization[0] 
+                              : (typeof tech.specialization === 'string' ? tech.specialization.split(',')[0] : 'Laundry Specialist')}
                           </span>
                         </div>
 

@@ -3,6 +3,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import laundryFacilityBg from './assets/images/laundry_facility_bg_1787139064485.jpg';
 import { Header } from './components/layout/Header';
 import { Sidebar, NavTab } from './components/layout/Sidebar';
+import { MobileNavigation } from './components/layout/MobileNavigation';
 import { AdminDashboard } from './components/dashboard/AdminDashboard';
 import { JobCardsList } from './components/jobcards/JobCardsList';
 import { TechnicianJobsList } from './components/technician/TechnicianJobsList';
@@ -53,8 +54,16 @@ const MainContent: React.FC = () => {
           onOpenLogin={() => setShowLogin(true)}
         />
 
+        {/* Mobile Navigation Strip & Bottom Dock */}
+        <MobileNavigation
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onOpenDeliverables={() => setShowDeliverables(true)}
+          onOpenLogin={() => setShowLogin(true)}
+        />
+
         {/* Main Workspace Layout */}
-        <div className="flex-1 flex flex-col lg:flex-row max-w-7xl w-full mx-auto p-3 sm:p-5 gap-5">
+        <div className="flex-1 flex flex-col lg:flex-row max-w-7xl w-full mx-auto p-3 sm:p-5 gap-5 pb-24 lg:pb-8">
           
           {/* Sidebar Navigation */}
           <Sidebar 

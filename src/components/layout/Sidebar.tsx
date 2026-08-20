@@ -32,7 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, onOpen
   const onDutyCount = technicians.filter(t => t.currentDutyStatus === 'ON_DUTY').length;
 
   return (
-    <aside className="w-full lg:w-64 bg-slate-900 text-slate-300 p-4 border-r border-slate-800 flex flex-col justify-between shrink-0 space-y-6">
+    <aside className="hidden lg:flex lg:w-64 bg-slate-900 text-slate-300 p-4 rounded-2xl border border-slate-800 flex-col justify-between shrink-0 space-y-6 shadow-md h-fit sticky top-20">
       
       <div className="space-y-6">
         

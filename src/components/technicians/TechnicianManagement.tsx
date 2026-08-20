@@ -17,6 +17,7 @@ export const TechnicianManagement: React.FC = () => {
     jobCards, 
     addTechnician, 
     updateTechnician, 
+    updateTechnicianPassword,
     deleteTechnician, 
     removalLogs, 
     showNotification,
@@ -28,6 +29,8 @@ export const TechnicianManagement: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingTech, setEditingTech] = useState<Technician | null>(null);
   const [techToRemove, setTechToRemove] = useState<Technician | null>(null);
+  const [techPasswordToChange, setTechPasswordToChange] = useState<Technician | null>(null);
+  const [newPasswordInput, setNewPasswordInput] = useState('');
   const [showLogsModal, setShowLogsModal] = useState(false);
 
   // New Tech Form State
@@ -43,11 +46,12 @@ export const TechnicianManagement: React.FC = () => {
   const [assignedVehicleId, setAssignedVehicleId] = useState<string>('');
 
   const filteredTechs = technicians.filter(t => {
+    const specStr = Array.isArray(t.specialization) ? t.specialization.join(' ') : (t.specialization || '');
     const matchesSearch = 
       t.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       t.employeeId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       t.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      t.specialization.toLowerCase().includes(searchTerm.toLowerCase());
+      specStr.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'ALL' || t.status === statusFilter || t.currentDutyStatus === statusFilter;
     return matchesSearch && matchesStatus;
@@ -245,7 +249,7 @@ export const TechnicianManagement: React.FC = () => {
                 </div>
 
                 <p className="mt-2 text-[11px] text-slate-500">
-                  <strong className="text-slate-700">Specialization:</strong> {tech.specialization}
+                  <strong className="text-slate-700">Specialization:</strong> {Array.isArray(tech.specialization) ? tech.specialization.join(', ') : tech.specialization}
                 </p>
               </div>
 
@@ -261,6 +265,17 @@ export const TechnicianManagement: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => {
+                      setTechPasswordToChange(tech);
+                      setNewPasswordInput(tech.password || 'tech123');
+                    }}
+                    className="p-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded text-xs font-semibold border border-amber-300 transition-colors cursor-pointer"
+                    title="Change or Reset Technician Login Password"
+                  >
+                    <KeyRound className="w-3.5 h-3.5" />
+                  </button>
+
                   <button
                     onClick={() => handleToggleStatus(tech)}
                     className={`p-1.5 rounded text-xs font-semibold border transition-colors cursor-pointer ${
@@ -570,6 +585,96 @@ export const TechnicianManagement: React.FC = () => {
                   className="px-5 py-2 bg-sky-700 hover:bg-sky-800 text-white font-bold rounded shadow-xs cursor-pointer"
                 >
                   Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Change Technician Password Modal */}
+      {techPasswordToChange && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/65 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 bg-slate-900 text-white">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400">
+                  <KeyRound className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-white">Set Technician Password</h2>
+                  <span className="text-[11px] text-slate-400">{techPasswordToChange.fullName} ({techPasswordToChange.employeeId})</span>
+                </div>
+              </div>
+              <button 
+                onClick={() => setTechPasswordToChange(null)}
+                className="text-slate-400 hover:text-white p-1 rounded-md transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!newPasswordInput.trim()) return;
+                updateTechnicianPassword(techPasswordToChange.id, newPasswordInput.trim());
+                setTechPasswordToChange(null);
+              }}
+              className="p-6 space-y-4 text-xs text-slate-700"
+            >
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Technician:</span>
+                  <span className="font-bold text-slate-900">{techPasswordToChange.fullName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Login Username:</span>
+                  <span className="font-mono font-bold text-sky-800">@{techPasswordToChange.username}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Current Saved Password:</span>
+                  <span className="font-mono text-slate-700">{techPasswordToChange.password || 'tech123'}</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-800 block mb-1">
+                  New Password / PIN *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newPasswordInput}
+                  onChange={(e) => setNewPasswordInput(e.target.value)}
+                  placeholder="Enter new password (e.g. tech123 or custom)..."
+                  className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-mono font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-between gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setNewPasswordInput('tech123')}
+                  className="text-[11px] text-sky-700 hover:text-sky-900 font-semibold underline cursor-pointer"
+                >
+                  Quick Default: "tech123"
+                </button>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-4 border-t border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setTechPasswordToChange(null)}
+                  className="px-4 py-2 border border-slate-300 rounded-xl text-slate-700 hover:bg-slate-100 font-semibold cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow-xs cursor-pointer"
+                >
+                  Update Password
                 </button>
               </div>
             </form>
